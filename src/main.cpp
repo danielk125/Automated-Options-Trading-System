@@ -3,15 +3,17 @@
 #include "../include/option_chain.h"
 #include <chrono>
 
-int main(){
-    string filename = "../src/rawCSV/NVDA_option_chain.csv";
+int main(int argc, char* argv[]){
+    if(!argv[1])
+        return 1;
+    string filename = argv[1];
 
     auto start = std::chrono::high_resolution_clock::now();
-    OptionChain NVDA_chain(filename);
+    OptionChain o_chain(filename);
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double> duration = end - start;
-    std::cout << "Option chain construction took " << duration.count() << "seconds\n";
+    std::cout << *o_chain.getSymbol() << " option chain construction took " << duration.count() << " seconds\n";
 
     return 0;
 }

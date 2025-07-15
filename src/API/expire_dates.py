@@ -28,4 +28,5 @@ def get_expire_dates(symbol: str, session: OAuth1Session):
 
         return dates
     except Exception as e:
-        print(f"Error getting expiry dates for {symbol}: {e}")
+        print(f"Error getting expiry dates for {symbol}: {e}\n")
+        return None

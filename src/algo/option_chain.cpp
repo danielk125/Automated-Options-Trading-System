@@ -6,11 +6,9 @@
 using std::cout;
 
 OptionChain::OptionChain(string filename){
-    int symbolStart = 14; // Index of first char not part of file structure is always 14
+    int symbolStart = 7; // Index of first char not part of file structure is always 7
     int symbolEnd = filename.find_first_of("_");
     _symbol = filename.substr(symbolStart, symbolEnd - symbolStart);
-
-    cout << _symbol << '\n';
 
     std::ifstream file(filename);
 
@@ -95,4 +93,8 @@ void OptionChain::printChain(){
         for(Option o : o_vector.second)
             o.printOption();
     
+}
+
+string* OptionChain::getSymbol(){
+    return &_symbol;
 }

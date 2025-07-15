@@ -21,4 +21,6 @@ public:
     void printChain();
 
     void printChain(string& dateID);
+
+    string* getSymbol();
 };

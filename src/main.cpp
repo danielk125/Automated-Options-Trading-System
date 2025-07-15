@@ -4,7 +4,7 @@
 #include <chrono>
 
 int main(int argc, char* argv[]){
-    if(!argv[1])
+    if(argc != 2)
         return 1;
     string filename = argv[1];
 

@@ -9,12 +9,14 @@ enum OptionType {
     PUT
 };
 
-struct Asset {
-    string symbol;
-    double price;
-    int volume;
+enum OrderSide {
+    BUY,
+    SELL
+};
 
-    Asset(string s, double p, int v) : symbol(s), price(p), volume(v) {}
+enum OrderType {
+    MARKET,
+    LIMIT
 };
 
 struct ExpiryDate {

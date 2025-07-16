@@ -46,3 +46,7 @@ void Option::printOption() {
         << "Expiration Date: " << _month << ' ' << _day << ' ' << _year << ", "
         << "Strike Price: " << _strikePrice << '\n';
 }
+
+double Option::priceOption() {
+    
+}

@@ -6,7 +6,7 @@ Order::Order(const Option& option, OrderSide side, OrderType type, double price)
     ORDER_COUNT++;
 }
 
-int Order::get_price(){
+double Order::get_price(){
     return _price;
 }
 

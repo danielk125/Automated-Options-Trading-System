@@ -47,6 +47,6 @@ void Option::printOption() {
         << "Strike Price: " << _strikePrice << '\n';
 }
 
-double Option::priceOption() {
-    
+double Option::getprice() {
+    return _ask;
 }

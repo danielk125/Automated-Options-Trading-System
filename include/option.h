@@ -61,5 +61,7 @@ public:
 
     void printOption();
 
-    double priceOption();
+    double getprice();
+
+    friend class Algo;
 };

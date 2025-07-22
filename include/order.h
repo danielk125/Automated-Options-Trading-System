@@ -14,7 +14,7 @@ class Order {
 public:
     Order(const Option& option, OrderSide side, OrderType type, double price);
 
-    int get_price();
+    double get_price();
 
     OrderType get_order_type();
 

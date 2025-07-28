@@ -1,14 +1,13 @@
 #include "../../include/option_chain.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
 
 using std::cout;
 
 OptionChain::OptionChain(string filename){
-    int symbolStart = 7; // Index of first char not part of file structure is always 7
-    int symbolEnd = filename.find_first_of("_");
-    _symbol = filename.substr(symbolStart, symbolEnd - symbolStart);
+    string path = filename.substr(filename.find_first_of("_") + 1);
+
+    int symbolStart = 4; // Index of first char not part of file structure is always 9
+    int symbolEnd = path.find_first_of("_");
+    _symbol = path.substr(symbolStart, symbolEnd - symbolStart);
 
     std::ifstream file(filename);
 
@@ -37,8 +36,6 @@ OptionChain::OptionChain(string filename){
         double delta =          std::stof(rawOptionData[13]);
         double gamma =          std::stof(rawOptionData[14]);
         double iv =             std::stof(rawOptionData[15]);
-        bool curValue =         rawOptionData[16] == "True";
-        string quoteDetail =    rawOptionData[17];
 
         string dateID  =  std::to_string(month) + '_' +
                           std::to_string(day) + '_' +
@@ -61,9 +58,7 @@ OptionChain::OptionChain(string filename){
             theta, 
             delta, 
             gamma, 
-            iv, 
-            curValue, 
-            quoteDetail
+            iv
         );
     }
 }
@@ -95,6 +90,6 @@ void OptionChain::printChain(){
     
 }
 
-string* OptionChain::getSymbol(){
-    return &_symbol;
+string OptionChain::getSymbol(){
+    return _symbol;
 }

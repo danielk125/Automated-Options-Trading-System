@@ -53,52 +53,6 @@ double Option::calculatePayoff(double val, double K, OptionType type){
     }
 }
 
-Option::Option(
-    OptionType optionType,
-    double assetPrice,
-    int year,
-    int month,
-    int day,
-    double strikePrice, 
-    double bid, 
-    double ask, 
-    int bidSize, 
-    int askSize, 
-    int volume, 
-    double rho, 
-    double vega, 
-    double theta, 
-    double delta, 
-    double gamma, 
-    double iv, 
-    bool curValue,
-    string quoteDetail
-    ) : 
-    _optionType(optionType),
-    _assetPrice(assetPrice),
-    _year(year),
-    _month(month),
-    _day(day),
-    _strikePrice(strikePrice), 
-    _bid(bid), 
-    _ask(ask), 
-    _bidSize(bidSize), 
-    _askSize(askSize), 
-    _volume(volume), 
-    _quoteDetail(quoteDetail),
-    _greeks(Greeks(rho, vega, theta, delta, gamma, iv, curValue))
-{
-    timeToExpiration(year, month, day);
-}
-
-void Option::printOption() {
-    cout << (_optionType ? "PUT OPTION, " : "CALL OPTION, ")
-        << "Expiration Date: " << _month << ' ' << _day << ' ' << _year
-        << ", Underlying Price: " << _assetPrice
-        << ", Strike Price: " << _strikePrice 
-        << ", Market Value: " << _ask;
-}
-
 double Option::getprice() {
     return _ask;
 }
@@ -108,7 +62,7 @@ double Option::price_binomial(){
     double S = _assetPrice;
     double K = _strikePrice;
     double T = _eTime;
-    double sigma = _greeks.iv;
+    double sigma = _impliedVol;
     int N;
     double r, dt, u, d, p, df;
 
@@ -132,3 +86,52 @@ double Option::price_binomial(){
 
     return optionValues[0];
 }
+
+Option::Option(
+    OptionType optionType,
+    double assetPrice,
+    int year,
+    int month,
+    int day,
+    double strikePrice, 
+    double bid, 
+    double ask, 
+    int bidSize, 
+    int askSize, 
+    int volume, 
+    double rho, 
+    double vega, 
+    double theta, 
+    double delta, 
+    double gamma, 
+    double iv
+    ) : 
+    _optionType(optionType),
+    _assetPrice(assetPrice),
+    _year(year),
+    _month(month),
+    _day(day),
+    _strikePrice(strikePrice), 
+    _bid(bid), 
+    _ask(ask), 
+    _bidSize(bidSize), 
+    _askSize(askSize), 
+    _volume(volume), 
+    _impliedVol(iv),
+    _greeks(Greeks(rho, vega, theta, delta, gamma))
+{
+    timeToExpiration(year, month, day);
+    _fairValue = price_binomial();
+    
+}
+
+void Option::printOption() {
+    cout << (_optionType ? "PUT OPTION, " : "CALL OPTION, ")
+        << "Expiration Date: " << _month << ' ' << _day << ' ' << _year
+        << ", Underlying Price: " << _assetPrice
+        << ", Strike Price: " << _strikePrice 
+        << ", Market Value: " << _ask
+        << ", Fair value: " << _fairValue << '\n';
+}
+
+

@@ -3,33 +3,8 @@ import subprocess
 from API.access_token import get_access_tokens
 from API.expire_dates import get_expire_dates
 from API.option_chain import get_option_chain
-from API.AV_historical_data import getHistoricalChain
 
-def main():
-    session = get_access_tokens()
-    for i in range(3):
-        if session is None:
-            session = get_access_tokens()
-        else:
-            break
-    if session is None:
-        print("Failed to obtain access tokens. Quitting the program now...")
-        return
-
-    symbol = input("Enter underlying asset symbol: ")
-    dates = get_expire_dates(symbol, session)
-    for i in range(3):
-        if dates is None:
-            symbol = input("Renter a VALID symbol: ")
-            dates = get_expire_dates(symbol, session)
-        else:
-            break
-    if dates is None:
-        print("Failed to obtain valid symbol. Quitting the program now...")
-        return
-
-    data_filename = f"rawCSV/{symbol}_option_chain.csv"
-
+def construct_csv(data_filename: str, dates, symbol, session):
     with open(data_filename, "w") as file:
         for date in dates:
             chain = get_option_chain(symbol, date, session)
@@ -59,6 +34,33 @@ def main():
                 output += "\n"
 
                 file.write(output)
+
+def main():
+    session = get_access_tokens()
+    for i in range(3):
+        if session is None:
+            session = get_access_tokens()
+        else:
+            break
+    if session is None:
+        print("Failed to obtain access tokens. Quitting the program now...")
+        return
+
+    symbol = input("Enter underlying asset symbol: ")
+    dates = get_expire_dates(symbol, session)
+    for i in range(3):
+        if dates is None:
+            symbol = input("Renter a VALID symbol: ")
+            dates = get_expire_dates(symbol, session)
+        else:
+            break
+    if dates is None:
+        print("Failed to obtain valid symbol. Quitting the program now...")
+        return
+
+    data_filename = f"live_CSV/{symbol}_option_chain.csv"
+
+    construct_csv(data_filename, dates, symbol, session)
 
     subprocess.run(["../build/app", data_filename])
 

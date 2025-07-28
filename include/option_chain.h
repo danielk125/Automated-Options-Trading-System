@@ -4,6 +4,9 @@
 
 #include <unordered_map>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 using std::unordered_map;
 using std::vector;
@@ -22,5 +25,5 @@ public:
 
     void printChain(string& dateID);
 
-    string* getSymbol();
+    string getSymbol();
 };

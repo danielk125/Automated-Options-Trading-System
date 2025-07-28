@@ -15,7 +15,7 @@ int main(int argc, char* argv[]){
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double> duration = end - start;
-    std::cout << *o_chain.getSymbol() << " option chain construction took " << duration.count() << " seconds\n";
+    std::cout << o_chain.getSymbol() << " option chain construction took " << duration.count() << " seconds\n";
 
     unordered_map<string, vector<Option>>* chain = o_chain.getChain();
     Algo algo;
@@ -26,12 +26,11 @@ int main(int argc, char* argv[]){
         for(auto o : n.second){
             if(i%20 == 0)
                 o.printOption();
-                std::cout << ";\b Fair value: " << algo.price_binomial(o) << '\n';
         }
     }
     end = std::chrono::high_resolution_clock::now();
     duration = end - start;
-    std::cout << *o_chain.getSymbol() << " option chain pricing took " << duration.count() << " seconds\n";
+    std::cout << o_chain.getSymbol() << " option chain pricing took " << duration.count() << " seconds\n";
 
     return 0;
 }

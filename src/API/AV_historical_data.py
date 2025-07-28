@@ -19,10 +19,10 @@ def getHistoricalChain(symbol: str, date: str):
     return csv_data
 
 symbol = input("Enter underyling asset symbol: ")
-date = "y"
+date = input("Enter valid trading date or 'q' to quit: ")
 
 while date != "q":
-    date = input("Enter valid trading date or 'q' to quit: ")
+    
 
     filename = f"../backtest_CSV/{symbol}/{date}_backtest.csv"
 
@@ -36,3 +36,5 @@ while date != "q":
 
     with open(filename, "w", newline="") as file:
         file.write(raw_test)
+    
+    date = input("Enter valid trading date or 'q' to quit: ")

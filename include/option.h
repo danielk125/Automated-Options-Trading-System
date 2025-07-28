@@ -16,11 +16,8 @@ struct Greeks {
     double delta;
     double gamma;
 
-    double iv;
-    bool currentValue;
-
-    Greeks(double r, double v, double t, double d, double g, double i, bool curVal) : 
-    rho(r), vega(v), theta(t), delta(d), gamma(g), iv(i), currentValue(curVal)
+    Greeks(double r, double v, double t, double d, double g) : 
+    rho(r), vega(v), theta(t), delta(d), gamma(g)
     {}
 };
 
@@ -36,10 +33,10 @@ class Option {
     int _bidSize;
     int _askSize;
     int _volume;
-    string _quoteDetail;
     Greeks _greeks;
     double _eTime;
     double _fairValue;
+    double _impliedVol;
 
     void timeToExpiration(int e_year, int e_month, int e_day);
 
@@ -75,9 +72,7 @@ public:
         double theta, 
         double delta, 
         double gamma, 
-        double iv, 
-        bool curValue,
-        string quoteDetail
+        double iv
     );
 
     void printOption();

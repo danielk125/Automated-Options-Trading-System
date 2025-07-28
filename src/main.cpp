@@ -3,6 +3,7 @@
 #include "../include/option_chain.h"
 #include "../include/algo.h"
 #include <chrono>
+#include <print>
 
 int main(int argc, char* argv[]){
     if(argc != 2)
@@ -23,9 +24,9 @@ int main(int argc, char* argv[]){
     start = std::chrono::high_resolution_clock::now();
     for(auto n : *(chain)){
         for(auto o : n.second){
-            Order order = algo.price_binomial(o);
             if(i%20 == 0)
-                std::cout << "Market value: " << o.getprice() << "; Fair value: " << order.get_price() << '\n';
+                o.printOption();
+                std::cout << ";\b Fair value: " << algo.price_binomial(o) << '\n';
         }
     }
     end = std::chrono::high_resolution_clock::now();

@@ -51,7 +51,7 @@ double Algo::calculatePayoff(double val, double K, OptionType type){
     }
 }
 
-Order Algo::price_binomial(Option& o) {
+double Algo::price_binomial(Option& o) {
     OptionType type = o._optionType;
     double S = o._assetPrice;
     double K = o._strikePrice;
@@ -78,9 +78,5 @@ Order Algo::price_binomial(Option& o) {
         }
     }
 
-    double fairValue = optionValues[0];
-
-    Order order(o, BUY, MARKET, fairValue);
-
-    return order;
+    return optionValues[0];
 }

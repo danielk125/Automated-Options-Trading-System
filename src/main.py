@@ -3,6 +3,7 @@ import subprocess
 from API.access_token import get_access_tokens
 from API.expire_dates import get_expire_dates
 from API.option_chain import get_option_chain
+from API.AV_historical_data import getHistoricalChain
 
 def main():
     session = get_access_tokens()

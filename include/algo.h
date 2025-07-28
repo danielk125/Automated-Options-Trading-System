@@ -25,6 +25,6 @@ class Algo{
 
 public:
 
-    Order price_binomial(Option& o);
+    double price_binomial(Option& o);
 
 };

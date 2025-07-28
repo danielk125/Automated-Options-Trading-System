@@ -3,6 +3,9 @@
 #include "util.h"
 
 #include <string>
+#include <iostream>
+#include <ctime>
+#include <vector>
 
 using std::string;
 
@@ -35,6 +38,24 @@ class Option {
     int _volume;
     string _quoteDetail;
     Greeks _greeks;
+    double _eTime;
+    double _fairValue;
+
+    void timeToExpiration(int e_year, int e_month, int e_day);
+
+    void calculate_binomial_params(
+        int& N,
+        double& r,
+        double& dt,
+        double& u,
+        double& d,
+        double& p,
+        double& df,
+        const double& T,
+        const double& sigma
+    );
+
+    double calculatePayoff(double val, double K, OptionType type);
 
 public:
     Option(
@@ -62,6 +83,8 @@ public:
     void printOption();
 
     double getprice();
+
+    double price_binomial();
 
     friend class Algo;
 };

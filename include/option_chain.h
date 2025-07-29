@@ -19,6 +19,8 @@ public:
 
     OptionChain(string filename);
 
+    // constructor overload for parsing backtest data
+
     unordered_map<string, vector<Option>>* getChain();
 
     void printChain();

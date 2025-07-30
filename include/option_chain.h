@@ -19,6 +19,7 @@ public:
 
     OptionChain(string filename);
 
+    OptionChain(string option_filename, double assetPrice, string symbol);
     // constructor overload for parsing backtest data
 
     unordered_map<string, vector<Option>>* getChain();

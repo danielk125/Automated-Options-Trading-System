@@ -18,23 +18,50 @@ def getHistoricalChain(symbol: str, date: str):
 
     return csv_data
 
+def getHistoricalAsset(symbol: str):
+    url = BASE_URL + f"function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&datatype=csv&apikey={AV_KEY}"
+    response = requests.get(url)
+
+    return response.text
+
 symbol = input("Enter underyling asset symbol: ")
-date = input("Enter valid trading date or 'q' to quit: ")
+folderpath = f"../backtest_CSV/{symbol}"
+folder = os.path.dirname(folderpath)
+os.makedirs(folder, exist_ok=True)
+asset_file = f"../backtest_CSV/{symbol}/asset_backtest.csv"
+assetDataExists = os.path.exists(f"../backtest_CSV/{symbol}/asset_backtest.csv")
+asset_data = ""
 
-while date != "q":
+if not assetDataExists:
+    asset_data = getHistoricalAsset(symbol)
     
+    with open(asset_file, "w", newline="") as file:
+        file.write(asset_data)
 
+date = input("Enter valid starting trading date: ")
+
+dates = []
+
+with open(asset_file, "r") as f:
+    lines = f.readlines()
+    cur_date = ""
+    index = 1
+    for l in range(1, len(lines)):
+        fields = lines[l].split(",")
+
+        if fields[0] == date:
+            cur_date = fields[0]
+            index = l
+    
+    for l in range(index, index + 20):
+        fields = lines[l].split(",")
+        dates.append(fields[0])
+
+for date in dates:
     filename = f"../backtest_CSV/{symbol}/{date}_backtest.csv"
 
-    folder = os.path.dirname(filename)
-    os.makedirs(folder, exist_ok=True)
-
     raw_test = getHistoricalChain(symbol, date)
-    if raw_test == "API error":
-        print("API over 25 limit")
-        break
+
 
     with open(filename, "w", newline="") as file:
         file.write(raw_test)
-    
-    date = input("Enter valid trading date or 'q' to quit: ")

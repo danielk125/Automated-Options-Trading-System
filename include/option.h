@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <ctime>
+#include <cmath>
 #include <vector>
 
 using std::string;

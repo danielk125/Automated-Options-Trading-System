@@ -19,6 +19,11 @@ enum OrderType {
     LIMIT
 };
 
+struct Asset {
+    string symbol;
+    double price;
+};
+
 struct ExpiryDate {
     int month;
     int year;

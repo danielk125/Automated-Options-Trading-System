@@ -7,10 +7,11 @@ OptionChain::OptionChain(string filename){
 
     int symbolStart = 4; // Index of first char not part of file structure is always 9
     int symbolEnd = path.find_first_of("_");
-    _symbol = path.substr(symbolStart, symbolEnd - symbolStart);
+    string symbol = path.substr(symbolStart, symbolEnd - symbolStart);
 
     std::ifstream file(filename);
 
+    int i = 0;
     string rawLine;
     while(std::getline(file, rawLine)){
         vector<string> rawOptionData;
@@ -60,11 +61,19 @@ OptionChain::OptionChain(string filename){
             gamma, 
             iv
         );
+
+        if (i == 0){
+            Asset a(symbol, assetPrice);
+            _a = a;
+        }
+
+        i++;
     }
 }
 
 OptionChain::OptionChain(string option_filename, double assetPrice, string symbol){
-    _symbol = symbol;
+    Asset a(symbol, assetPrice);
+    _a = a;
     std::ifstream o_file(option_filename);
     string rawLine;
     while(std::getline(o_file, rawLine)){
@@ -134,7 +143,7 @@ void OptionChain::printChain(string& dateID){
     if(!_chain.contains(dateID))
         return;
 
-    cout << "Option Chain for " << _symbol << ", dateID: " << dateID << ":\n";
+    cout << "Option Chain for " << _a.symbol << ", dateID: " << dateID << ":\n";
 
     for(Option o : _chain[dateID]){
         o.printOption();
@@ -144,7 +153,7 @@ void OptionChain::printChain(string& dateID){
 }
 
 void OptionChain::printChain(){
-    cout << "Option Chain for " << _symbol << '\n';
+    cout << "Option Chain for " << _a.symbol << '\n';
 
     for(auto &o_vector : _chain)
         for(Option o : o_vector.second)
@@ -153,5 +162,9 @@ void OptionChain::printChain(){
 }
 
 string OptionChain::getSymbol(){
-    return _symbol;
+    return _a.symbol;
+}
+
+Asset OptionChain::getAsset(){
+    return _a;
 }

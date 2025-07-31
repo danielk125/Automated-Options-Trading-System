@@ -18,19 +18,27 @@ int main(int argc, char* argv[]){
     std::cout << o_chain.getSymbol() << " option chain construction took " << duration.count() << " seconds\n";
 
     unordered_map<string, vector<Option>>* chain = o_chain.getChain();
-    Algo algo;
 
     int i = 0;
-    start = std::chrono::high_resolution_clock::now();
     for(auto n : *(chain)){
         for(auto o : n.second){
             if(i%20 == 0)
                 o.printOption();
         }
     }
-    end = std::chrono::high_resolution_clock::now();
-    duration = end - start;
-    std::cout << o_chain.getSymbol() << " option chain pricing took " << duration.count() << " seconds\n";
+    
+    Algo a;
+    auto rel = a.extractContracts(o_chain, 2, 6);
+
+    for (auto& o : rel[BUY]){
+        std::cout << ("BUYS:");
+        o.printOption();
+    }
+        
+    for (auto& o : rel[SELL]){
+        std::cout << ("SELLS:");
+        o.printOption();
+    }
 
     return 0;
 }

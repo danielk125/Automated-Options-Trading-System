@@ -130,7 +130,8 @@ void Option::printOption() {
         << "Expiration Date: " << _month << ' ' << _day << ' ' << _year
         << ", Underlying Price: " << _assetPrice
         << ", Strike Price: " << _strikePrice 
-        << ", Market Value: " << _ask
+        << ", Ask Value: " << _ask
+        << ", Bid Value: " << _bid
         << ", Fair value: " << _fairValue << '\n';
 }
 

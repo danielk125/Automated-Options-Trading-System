@@ -12,7 +12,7 @@ using std::unordered_map;
 using std::vector;
 
 class OptionChain {
-    string _symbol;
+    Asset _a;
     unordered_map<string, vector<Option>> _chain;
 
 public:
@@ -29,4 +29,6 @@ public:
     void printChain(string& dateID);
 
     string getSymbol();
+
+    Asset getAsset();
 };

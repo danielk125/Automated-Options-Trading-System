@@ -1,8 +1,8 @@
 #include "../../include/algo.h"
 
-bool Algo::mispriced(const Option& o, OrderSide& direction){
-    double up_margin = 0.001;
-    double down_margin = 0.001;
+bool Algo::mispriced(const Option& o, OrderSide& direction){ // fix for use with PUTs
+    double up_margin = 0.01;
+    double down_margin = 0.01;
 
     if (o._ask < o._fairValue){
         double diff = o._fairValue - o._ask;
@@ -31,35 +31,30 @@ bool Algo::mispriced(const Option& o, OrderSide& direction){
 
 std::unordered_map<OrderSide, std::vector<Option>> Algo::extractContracts(OptionChain& oc, int startWeek, int endWeek){
     double price = oc.getAsset().price;
-    double target_threshold = 2;
+    double target_threshold = 0.1;
     double target = price * target_threshold + price;
     auto chain = oc.getChain(); // unordered map
 
     std::unordered_map<OrderSide, std::vector<Option>> relevants;
     relevants[BUY];
     relevants[SELL];
-    int i = 0;
-    for (auto& node : *chain){
-        if (i >= startWeek && i <= endWeek){
-            auto options = node.second;
 
-            for (Option& contract : options){
-                double k = contract._strikePrice;
-                
-                if (k > price)
-                    break;
+    for (int i = startWeek; i <= endWeek; ++i){
+        auto options = oc.getSingleChain(i);
+        for (Option& contract : options){
+            double k = contract._strikePrice;
 
-                if (k < target)
-                    continue;
+            if (k < price)
+                continue;
+            
+            if (k > target)
+                break;
 
-                OrderSide direction;
-                if (mispriced(contract, direction)){
-                    relevants[direction].push_back(contract);
-                }
+            OrderSide direction;
+            if (mispriced(contract, direction)){
+                relevants[direction].push_back(contract);
             }
         }
-        
-        ++i;
     }
 
     return relevants;

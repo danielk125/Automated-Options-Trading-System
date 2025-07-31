@@ -38,9 +38,11 @@ OptionChain::OptionChain(string filename){
         double gamma =          std::stof(rawOptionData[14]);
         double iv =             std::stof(rawOptionData[15]);
 
-        string dateID  =  std::to_string(month) + '_' +
-                          std::to_string(day) + '_' +
-                          std::to_string(year);
+        ExpiryDate date(month, day, year);
+        string dateID = date.dateID;
+
+        if(_dates.empty() || _dates.back().dateID != dateID)
+            _dates.push_back(date);
         
         _chain[dateID].emplace_back(
             OptionType::CALL, 
@@ -111,7 +113,11 @@ OptionChain::OptionChain(string option_filename, double assetPrice, string symbo
         double gamma =          std::stof(rawOptionData[16]);
         double iv =             std::stof(rawOptionData[14]);
 
-        string dateID  =  date;
+        ExpiryDate e_date(month, day, year);
+        string dateID = e_date.dateID;
+
+        if(_dates.empty() || _dates.back().dateID != dateID)
+            _dates.push_back(e_date);
         
         _chain[dateID].emplace_back(
             type, 
@@ -135,6 +141,11 @@ OptionChain::OptionChain(string option_filename, double assetPrice, string symbo
     }
 }
 
+vector<Option> OptionChain::getSingleChain(int i){
+    string dateID = _dates[i].dateID;
+    return _chain[dateID];
+}
+
 unordered_map<string, vector<Option>>* OptionChain::getChain(){
     return &_chain;
 }
@@ -155,9 +166,11 @@ void OptionChain::printChain(string& dateID){
 void OptionChain::printChain(){
     cout << "Option Chain for " << _a.symbol << '\n';
 
-    for(auto &o_vector : _chain)
-        for(Option o : o_vector.second)
+    for(auto& date : _dates){
+        for(auto& o : _chain[date.dateID]){
             o.printOption();
+        }
+    }
     
 }
 

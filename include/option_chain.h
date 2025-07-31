@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 using std::unordered_map;
 using std::vector;
@@ -14,6 +15,7 @@ using std::vector;
 class OptionChain {
     Asset _a;
     unordered_map<string, vector<Option>> _chain;
+    vector<ExpiryDate> _dates;
 
 public:
 
@@ -23,6 +25,8 @@ public:
     // constructor overload for parsing backtest data
 
     unordered_map<string, vector<Option>>* getChain();
+
+    vector<Option> getSingleChain(int i);
 
     void printChain();
 

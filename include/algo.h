@@ -1,4 +1,5 @@
 #include "option.h"
+#include "option_chain.h"
 #include "position.h"
 #include "portfolio.h"
 
@@ -14,6 +15,7 @@ class Algo{
         function to pull relevant contracts
         -- $1-$10 out-of-the-money contracts between 2-6 weeks out
     */ 
+   std::vector<Option> extractContracts(OptionChain& oc);
 
 public:
 

@@ -45,15 +45,22 @@ dates = []
 with open(asset_file, "r") as f:
     lines = f.readlines()
     cur_date = ""
-    index = 1
-    for l in range(1, len(lines)):
+    index = -1
+    for l in range(len(lines) - 1, -1, -1):
         fields = lines[l].split(",")
 
         if fields[0] == date:
             cur_date = fields[0]
             index = l
+            break;
     
-    for l in range(index, index + 20):
+    if index == -1:
+        print("Date not found.")
+        exit(1)
+
+    stop = max(index - 20, -1)
+    
+    for l in range(index, stop, -1):
         fields = lines[l].split(",")
         dates.append(fields[0])
 

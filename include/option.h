@@ -83,4 +83,6 @@ public:
     double price_binomial();
 
     friend class Algo;
+
+    friend class Portfolio;
 };

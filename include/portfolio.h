@@ -20,5 +20,7 @@ struct Portfolio {
 
     void loadPortfolio();
 
+    void savePortfolio();
+
     friend class Algo;
 };

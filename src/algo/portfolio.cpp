@@ -56,3 +56,46 @@ void Portfolio::loadPortfolio(){
         }
     }
 }
+
+
+void Portfolio::savePortfolio(){
+    json j;
+    j["cash"] = _cash;
+    j["value"] = _value;
+
+    for (const auto& [symbol, pos_list] : _positions) {
+        for (const auto& pos : pos_list) {
+            json pos_json;
+
+            const Option& option = pos.o;
+
+            pos_json["option"] = {
+                {"optionType", option._optionType},
+                {"assetPrice", option._assetPrice},
+                {"year", option._year},
+                {"month", option._month},
+                {"day", option._day},
+                {"strikePrice", option._strikePrice},
+                {"bid", option._bid},
+                {"ask", option._ask},
+                {"bidSize", option._bidSize},
+                {"askSize", option._askSize},
+                {"volume", option._volume},
+                {"rho", option._greeks.rho},
+                {"vega", option._greeks.vega},
+                {"theta", option._greeks.theta},
+                {"delta", option._greeks.delta},
+                {"gamma", option._greeks.gamma},
+                {"iv", option._impliedVol}
+            };
+
+            pos_json["quantity"] = pos.quantity;
+            pos_json["price"] = pos.price;
+
+            j["positions"][symbol].push_back(pos_json);
+        }
+    }
+
+    std::ofstream file("portfolio.json");
+    file << std::setw(2) << j << std::endl;
+}

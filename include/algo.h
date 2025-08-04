@@ -11,7 +11,9 @@ class Algo{
 
     bool mispriced(const Option& o, OrderSide& direction);
 
-
+    /*
+    function to add positions to existing portfolio and save
+    */
 
 public:
 

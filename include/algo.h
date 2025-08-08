@@ -8,14 +8,13 @@
 #include <cmath>
 
 class Algo{
-
+public:
     bool mispriced(const Option& o, OrderSide& direction);
 
     /*
     function to add positions to existing portfolio and save
     */
-
-public:
+   std::vector<Position> generatePositions(const std::unordered_map<OrderSide, std::vector<Option>>& contracts);
 
     /*
     function to pull relevant contracts

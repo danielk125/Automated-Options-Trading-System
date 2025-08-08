@@ -16,6 +16,37 @@ void Portfolio::calculateGain(Portfolio& other){
     _gain = _value - other._value + other._gain;
 }
 
+void Portfolio::closePositions(){
+    
+}
+
+void Portfolio::addPositions(std::string_view symbol, std::span<Position> positions){
+    for (Position p : positions){
+        int i = -1;
+        int j = -1;
+        for (Position e_p : _positions.at(symbol.data())){
+            j++;
+            if (p.o._strikePrice == e_p.o._strikePrice &&
+                p.o._day == e_p.o._day &&
+                p.o._month == e_p.o._month &&
+                p.o._year == e_p.o._year)
+            {
+                i = j;
+                break;
+            }
+        }
+
+        if (i != -1){
+            _positions[symbol.data()][i] = p;
+        } else if (_cash >= p.o._ask) {
+            _cash -= p.o._ask;
+            _positions[symbol.data()].push_back(p);
+        } else {
+            break;
+        }   
+    }
+}
+
 void Portfolio::loadPortfolio(){
     if (std::filesystem::exists("portfolio.json")) {
         auto j = json::parse(std::ifstream("portfolio.json"));
@@ -48,8 +79,9 @@ void Portfolio::loadPortfolio(){
 
                 auto quantity = pos["quantity"];
                 auto price = pos["price"];
+                auto side = pos["side"];
 
-                Position p (o, price, quantity);
+                Position p (o, side, price, quantity);
 
                 _positions[sym.key()].push_back(p);
             }
@@ -91,6 +123,7 @@ void Portfolio::savePortfolio(){
 
             pos_json["quantity"] = pos.quantity;
             pos_json["price"] = pos.price;
+            pos_json["side"] = pos.side;
 
             j["positions"][symbol].push_back(pos_json);
         }

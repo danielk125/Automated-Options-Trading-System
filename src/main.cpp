@@ -18,19 +18,20 @@ int main(int argc, char* argv[]){
     std::cout << o_chain.getSymbol() << " option chain construction took " << duration.count() << " seconds\n";
 
     unordered_map<string, vector<Option>>* chain = o_chain.getChain();
+    std::string_view sym(o_chain.getSymbol());
     
     Algo a;
     auto rel = a.extractContracts(o_chain, 4, 10);
+    auto posits = a.generatePositions(rel);
 
-    std::cout << ("BUYS:\n");
-    for (auto& o : rel[BUY]){
-        o.printOption();
-    }
-        
-    std::cout << ("SELLS:\n");
-    for (auto& o : rel[SELL]){
-        o.printOption();
-    }
+    Portfolio p;
+    p.loadPortfolio();
+    p.addPositions(sym, posits);
+    p._cash = 1000;
+    p.calculateValue();
+    p._gain = 0;
+
+    p.savePortfolio();
 
     return 0;
 }

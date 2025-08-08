@@ -76,7 +76,7 @@ public:
         double iv
     );
 
-    void printOption();
+    void printOption() const;
 
     double getprice();
 

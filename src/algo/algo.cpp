@@ -59,3 +59,27 @@ std::unordered_map<OrderSide, std::vector<Option>> Algo::extractContracts(Option
 
     return relevants;
 }
+
+std::vector<Position> Algo::generatePositions(const std::unordered_map<OrderSide, std::vector<Option>>& contracts){
+    std::vector<Position> positions;
+    int quantity = 1; // placeholder
+    
+    for (const auto& o : contracts.at(BUY)){
+        positions.emplace_back(
+            o,
+            BUY,
+            o._ask,
+            quantity
+        );
+    }
+        
+    for (const auto& o : contracts.at(SELL)){
+        positions.emplace_back(
+            o,
+            SELL,
+            o._bid,
+            quantity
+        );
+    }
+    return positions;
+}

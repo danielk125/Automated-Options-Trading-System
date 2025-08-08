@@ -125,7 +125,7 @@ Option::Option(
     
 }
 
-void Option::printOption() {
+void Option::printOption() const  {
     cout << (_optionType ? "PUT OPTION, " : "CALL OPTION, ")
         << "Expiration Date: " << _month << ' ' << _day << ' ' << _year
         << ", Underlying Price: " << _assetPrice

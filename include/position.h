@@ -7,6 +7,7 @@
 struct Position {
 
     Option o;
+    OrderSide side;
     double price;
     int quantity;
 

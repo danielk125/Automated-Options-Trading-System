@@ -1,6 +1,8 @@
 #include <vector>
 #include <unordered_map>
 #include <fstream>
+#include <string_view>
+#include <span>
 
 #include "position.h"
 #include "json.h"
@@ -17,6 +19,10 @@ struct Portfolio {
     void calculateValue();
 
     void calculateGain(Portfolio& other);
+
+    void closePositions();
+
+    void addPositions(std::string_view symbol, std::span<Position> positions);
 
     void loadPortfolio();
 

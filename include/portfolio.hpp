@@ -4,17 +4,24 @@
 #include <string_view>
 #include <span>
 
-#include "position.h"
-#include "json.h"
+#include "json.hpp"
+#include "util.hpp"
 
 using json = nlohmann::json;
 
-struct Portfolio {
-    std::unordered_map<std::string,std::vector<Position>> _positions;
+struct Position {
+    OrderSide side;
+    double entryPrice;
+    OptionAbrv contractInfo;
+    double curValue;
+};
 
-    double _cash;
-    double _value;
-    double _gain;
+class Portfolio {
+public:
+    double cash;
+    double value;
+    double unrealizedGain;
+    double realizedGain;
 
     void calculateValue();
 

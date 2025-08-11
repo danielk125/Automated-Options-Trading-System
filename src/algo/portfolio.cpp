@@ -1,4 +1,4 @@
-#include "../../include/portfolio.h"
+#include "../../include/portfolio.hpp"
 
 void Portfolio::calculateValue(){
     double value = 0;

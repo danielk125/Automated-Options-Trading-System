@@ -16,7 +16,7 @@ def get_option_chain(symbol: str, date, session: OAuth1Session):
         month = date["month"]
         year = date["year"]
         
-        url = BASE_URL + f"/v1/market/optionchains?symbol={symbol}&expiryYear={year}&expiryMonth={month}&expiryDay={day}&chainType=CALL"
+        url = BASE_URL + f"/v1/market/optionchains?symbol={symbol}&expiryYear={year}&expiryMonth={month}&expiryDay={day}"
         response = session.get(url, headers={"Accept": "application/json"})
         response.raise_for_status()
         return response.json()['OptionChainResponse']

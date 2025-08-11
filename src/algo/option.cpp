@@ -1,8 +1,8 @@
-#include "../../include/option.h"
+#include "../../include/option.hpp"
 
 using std::cout;
 
-void Option::timeToExpiration(int e_year, int e_month, int e_day){
+void Option::calculateTimeToExpiration(int e_year, int e_month, int e_day){
     time_t now = time(NULL);
 
     struct tm expTime {0};
@@ -24,7 +24,7 @@ void Option::timeToExpiration(int e_year, int e_month, int e_day){
     _eTime = timeToExpireYears;
 }
 
-void Option::calculate_binomial_params(
+void Option::calculate_binomial_params (
     int& N,
     double& r,
     double& dt,
@@ -34,7 +34,7 @@ void Option::calculate_binomial_params(
     double& df,
     const double& T,
     const double& sigma
-) {
+) const {
     N = 100;
     r = 0.05;
 
@@ -45,16 +45,12 @@ void Option::calculate_binomial_params(
     df = std::exp(-r * dt);
 }
 
-double Option::calculatePayoff(double val, double K, OptionType type){
+double Option::calculatePayoff(double val, double K, OptionType type) const{
     if (type == CALL){
         return std::max(0.0, val - K);
     } else {
         return std::max(0.0, K - val);
     }
-}
-
-double Option::getprice() {
-    return _ask;
 }
 
 double Option::price_binomial(){
@@ -87,8 +83,29 @@ double Option::price_binomial(){
     return optionValues[0];
 }
 
+Option::Option(){
+    _optionType     = CALL;
+    _assetPrice     = -1;
+    _strikePrice    = -1;
+    _bid            = -1;
+    _ask            = -1;
+    _bidSize        = -1;
+    _askSize        = -1;
+    _volume         = -1;
+    _openInterest   = -1;
+    _rho            = -1;
+    _vega           = -1;
+    _theta          = -1;
+    _delta          = -1;
+    _gamma          = -1;
+    _impliedVol     = -1;
+    _expirationDate = "";
+    _eTime          = -1;
+    _fairValue      = -1;
+}
+
 Option::Option(
-    OptionType optionType,
+    OptionType optionType, 
     double assetPrice,
     int year,
     int month,
@@ -99,6 +116,7 @@ Option::Option(
     int bidSize, 
     int askSize, 
     int volume, 
+    int openInterest,
     double rho, 
     double vega, 
     double theta, 
@@ -108,26 +126,31 @@ Option::Option(
     ) : 
     _optionType(optionType),
     _assetPrice(assetPrice),
-    _year(year),
-    _month(month),
-    _day(day),
     _strikePrice(strikePrice), 
     _bid(bid), 
     _ask(ask), 
     _bidSize(bidSize), 
     _askSize(askSize), 
     _volume(volume), 
+    _openInterest(openInterest),
     _impliedVol(iv),
-    _greeks(Greeks(rho, vega, theta, delta, gamma))
+    _delta(delta),
+    _gamma(gamma),
+    _theta(theta),
+    _rho(rho),
+    _vega(vega)
 {
-    timeToExpiration(year, month, day);
+    _expirationDate =   std::to_string(month) + "_" +
+                        std::to_string(day)  + "_" +
+                        std::to_string(year);
+    calculateTimeToExpiration(year, month, day);
     _fairValue = price_binomial();
     
 }
 
 void Option::printOption() const  {
     cout << (_optionType ? "PUT OPTION, " : "CALL OPTION, ")
-        << "Expiration Date: " << _month << ' ' << _day << ' ' << _year
+        << "Expiration Date: " << _expirationDate
         << ", Underlying Price: " << _assetPrice
         << ", Strike Price: " << _strikePrice 
         << ", Ask Value: " << _ask
@@ -135,4 +158,28 @@ void Option::printOption() const  {
         << ", Fair value: " << _fairValue << '\n';
 }
 
+void Option::calculateMisprice() {
+    _mispricePercentBuy = (_fairValue - _ask) / _ask;
+    _mispricePercentSell = (_bid - _fairValue) / _bid; 
+}
 
+string Option::getExpDate() const { return _expirationDate; }
+double Option::getStrike() const { return _strikePrice; }
+OptionType Option::getOptionType() const { return _optionType; }
+double Option::getAssetPrice() const { return _assetPrice; }
+double Option::getBid() const { return _bid; }
+double Option::getAsk() const { return _ask; }
+int Option::getVolume() const { return _volume; }
+int Option::getOI() const { return _openInterest; }
+int Option::getBidSize() const { return _bidSize; }
+int Option::getAskSize() const { return _askSize; }
+double Option::getIV() const { return _impliedVol; }
+double Option::timeToExpiration() const { return _eTime; }
+double Option::fairValue() const { return _fairValue; }
+double Option::getDelta() const { return _delta; }
+double Option::getGamma() const { return _gamma; }
+double Option::getTheta() const { return _theta; }
+double Option::getRho() const { return _rho; }
+double Option::getVega() const { return _vega; }
+double Option::getMispriceBuy() const { return _mispricePercentBuy; }
+double Option::getMispriceSell() const { return _mispricePercentSell; }

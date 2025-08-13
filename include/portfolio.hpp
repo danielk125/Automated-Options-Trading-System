@@ -6,6 +6,7 @@
 
 #include "json.hpp"
 #include "util.hpp"
+#include "option_map.hpp"
 
 using json = nlohmann::json;
 
@@ -14,26 +15,32 @@ struct Position {
     double entryPrice;
     OptionAbrv contractInfo;
     double curValue;
+    int size;
 };
 
 class Portfolio {
 public:
-    double cash;
-    double value;
-    double unrealizedGain;
-    double realizedGain;
+    // parse current positions and apply closing logic
+    vector<Position&> closePositions();
 
-    void calculateValue();
+    // parse relevent contracts and enter new positions
+    vector<Position&> openPositions();
 
-    void calculateGain(Portfolio& other);
+    // send positions to execution handler
+    void executeOrders();
 
-    void closePositions();
-
-    void addPositions(std::string_view symbol, std::span<Position> positions);
-
+    // for backtesting
     void loadPortfolio();
 
     void savePortfolio();
 
-    friend class Algo;
+private:
+    OptionMap _OMap;
+
+    vector<Position> _currentPositions;
+
+    double cash;
+    double value;
+    double unrealizedGain;
+    double realizedGain;
 };

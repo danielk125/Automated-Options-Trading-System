@@ -4,10 +4,12 @@
 # Retrieval
 
 import subprocess
+import json
 
 from API.access_token import get_access_tokens
 from API.expire_dates import get_expire_dates
 from API.option_chain import get_option_chain
+from API.portfolio_data_retrieval import get_portfolio_data
 
 def construct_csv(data_filename: str, dates, symbol, session):
     def construct_output(option):
@@ -58,6 +60,12 @@ def main():
     if session is None:
         print("Failed to obtain access tokens. Quitting the program now...")
         return
+    
+    portfolio_data = get_portfolio_data(session)
+    # Save portfolio data to a JSON file
+    with open("portfolio.json", "w") as f:
+        json.dump(portfolio_data, f, indent=4)
+
 
     symbol = input("Enter underlying asset symbol: ")
     dates = get_expire_dates(symbol, session)

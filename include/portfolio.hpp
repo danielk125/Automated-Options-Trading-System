@@ -43,4 +43,6 @@ private:
     double value;
     double unrealizedGain;
     double realizedGain;
+
+    void parseBalance(double& cash, double& balance);
 };

@@ -15,34 +15,32 @@ enum OrderSide {
     SELL
 };
 
+enum PositionSide {
+    LONG,
+    SHORT
+};
+
+enum SecurityType {
+    EQ,
+    OPTN
+};
+
 enum OrderType {
     MARKET,
     LIMIT
 };
 
-class OptionPair {
-    Option _callOption;
-    Option _putOption;
-
-public:
-    OptionPair(Option call, Option put) : _callOption(call), _putOption(put) {
-        if (call.getOptionType() != CALL || put.getOptionType() != PUT){
-            throw std::invalid_argument("OptionPair must be (CALL, PUT)");
-        }
-    }
-
-    const Option& getCall() const {
-        return _callOption;
-    }
-
-    const Option& getPut() const {
-        return _putOption;
-    }
+struct Abreviator {
+    string symbol;
+    explicit Abreviator(string s) : symbol(s) {}
+    virtual ~Abreviator() = default;
 };
 
-struct OptionAbrv {
-    string symbol;
+struct OptionAbreviator : public Abreviator {
     string expDate;
     double strikePrice;
     OptionType type;
+
+    OptionAbreviator(string s, string exp, double k, OptionType t) : 
+        Abreviator(s), expDate(exp), strikePrice(k), type(t) {}
 };

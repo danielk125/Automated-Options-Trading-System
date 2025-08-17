@@ -26,4 +26,6 @@ public:
     OptionFilter(int nws, int nwe, double mpth, bool ic, bool ip, bool ib, bool is);
 
     bool markOption(Option& option);
+
+    double getMisprice();
 };

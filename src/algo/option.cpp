@@ -183,3 +183,12 @@ double Option::getRho() const { return _rho; }
 double Option::getVega() const { return _vega; }
 double Option::getMispriceBuy() const { return _mispricePercentBuy; }
 double Option::getMispriceSell() const { return _mispricePercentSell; }
+bool Option::checkBuy() const { return _buy; }
+bool Option::checkSell() const { return _sell; }
+
+void Option::markBuy(bool b){
+    _buy = b;
+}
+void Option::markSell(bool s){
+    _sell = s;
+}

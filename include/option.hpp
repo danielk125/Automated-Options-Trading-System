@@ -55,8 +55,13 @@ public:
     double getVega() const;
     double getMispriceBuy() const;
     double getMispriceSell() const;
+    bool checkBuy() const;
+    bool checkSell() const;
 
     void printOption() const;
+
+    void markBuy(bool b);
+    void markSell(bool s);
 
 private:
     string _expirationDate;
@@ -80,6 +85,9 @@ private:
     double _rho;
     double _vega;
 
+    bool _buy;
+    bool _sell;
+
     void calculateTimeToExpiration(int e_year, int e_month, int e_day);
 
     void calculate_binomial_params(
@@ -99,4 +107,24 @@ private:
     void calculateMisprice();
 
     double price_binomial();
+};
+
+class OptionPair {
+    Option _callOption;
+    Option _putOption;
+
+public:
+    OptionPair(Option call, Option put) : _callOption(call), _putOption(put) {
+        if (call.getOptionType() != CALL || put.getOptionType() != PUT){
+            throw std::invalid_argument("OptionPair must be (CALL, PUT)");
+        }
+    }
+
+    const Option& getCall() const {
+        return _callOption;
+    }
+
+    const Option& getPut() const {
+        return _putOption;
+    }
 };

@@ -19,7 +19,7 @@ class OptionChain {
 public:
     OptionChain(unordered_map<double, OptionPair>& chain) : _chain(chain) {};
 
-    const OptionPair& operator[](double K){ return _chain.at(K); }
+    const OptionPair operator[](double K) const { return _chain.at(K); }
 
 private:
     unordered_map<double, OptionPair>& _chain;
@@ -39,9 +39,11 @@ public:
     void printChain() const;
 
     // overload [] operator to function as unordered map access
-    const OptionChain& operator[](std::string_view dateID);
+    const OptionChain operator[](std::string_view dateID);
 
-    const auto& getFilteredContracts();
+    std::optional<Option> getFilteredContract();
+
+    double accessMispriceThreshold();
 
 private:
     unordered_map<string, unordered_map<double, OptionPair>> _map;

@@ -83,6 +83,6 @@ def main():
 
     construct_csv(data_filename, dates, symbol, session)
 
-    subprocess.run(["../build/app", data_filename])
+    subprocess.run(["../build/app", symbol])
 
 main()

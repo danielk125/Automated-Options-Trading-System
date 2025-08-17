@@ -3,6 +3,10 @@
 #include <fstream>
 #include <string_view>
 #include <span>
+#include <fstream>
+#include <utility>
+#include <iostream>
+#include <filesystem>
 
 #include "json.hpp"
 #include "util.hpp"
@@ -11,20 +15,42 @@
 using json = nlohmann::json;
 
 struct Position {
-    OrderSide side;
+    PositionSide posSide;
+    SecurityType secType;
     double entryPrice;
-    OptionAbrv contractInfo;
+    std::unique_ptr<Abreviator> secInfo;
     double curValue;
     int size;
+
+    Position() = default;
+    Position(const Position&)            = delete;    // no copying
+    Position& operator=(const Position&) = delete;
+    Position(Position&&)                 = default;   // movable
+    Position& operator=(Position&&)      = default;
+};
+
+struct Order {
+    OrderSide ordSide;
+    SecurityType secType;
+    double price;
+    std::unique_ptr<Abreviator> secInfo;
+    int size;
+
+    Order() = default;
+    Order(const Order&)            = delete;
+    Order& operator=(const Order&) = delete;
+    Order(Order&&)                 = default;
+    Order& operator=(Order&&)      = default;
 };
 
 class Portfolio {
 public:
+    Portfolio(OptionMap& omap);
     // parse current positions and apply closing logic
-    vector<Position&> closePositions();
+    vector<Order> closePositions();
 
-    // parse relevent contracts and enter new positions
-    vector<Position&> openPositions();
+    // parse relevent contracts and enter new orders
+    vector<Order> openPositions();
 
     // send positions to execution handler
     void executeOrders();
@@ -32,10 +58,8 @@ public:
     // for backtesting
     void loadPortfolio();
 
-    void savePortfolio();
-
 private:
-    OptionMap _OMap;
+    OptionMap& _OMap;
 
     vector<Position> _currentPositions;
 
@@ -43,6 +67,4 @@ private:
     double value;
     double unrealizedGain;
     double realizedGain;
-
-    void parseBalance(double& cash, double& balance);
 };

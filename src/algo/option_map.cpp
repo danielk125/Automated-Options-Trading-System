@@ -86,11 +86,12 @@ OptionMap::OptionMap(string symbol, bool customFilter) : _symbol(symbol) {
         string dateID = call.getExpDate();
         double k = call.getStrike();
 
-        _map[dateID][k] = OptionPair(call, put);
+        auto& chain = _map[dateID];
+        chain.insert_or_assign(k, OptionPair(call, put));
     }
 }
 
-const OptionChain& OptionMap::operator[](std::string_view dateID){
+const OptionChain OptionMap::operator[](std::string_view dateID){
     return OptionChain(_map.at(static_cast<string>(dateID)));
 }
 
@@ -103,10 +104,19 @@ void OptionMap::printChain() const {
     }
 }
 
-const auto& OptionMap::getFilteredContracts(){
-    return _filtered;
+std::optional<Option> OptionMap::getFilteredContract() {
+    if (_filtered.empty())
+        return std::nullopt;
+
+    Option o = _filtered.top();
+    _filtered.pop();
+    return o;
 }
 
 const unordered_map<double, OptionPair>& OptionMap::getSingleChain(std::string_view dateID) const{
     return _map.at(static_cast<string>(dateID));
+}
+
+double OptionMap::accessMispriceThreshold(){
+    return _filter.getMisprice();
 }

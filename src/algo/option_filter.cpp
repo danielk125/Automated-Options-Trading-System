@@ -45,7 +45,9 @@ bool OptionFilter::markOption(Option& option){
     bool expCheck = checkTime(option.timeToExpiration());
 
     bool misPriceBuy = includeBuys && checkMisprice(option.getMispriceBuy());
+    option.markBuy(misPriceBuy);
     bool misPriceSell = includeSells && checkMisprice(option.getMispriceSell());
+    option.markSell(misPriceSell);
     bool misPriceCheck = misPriceBuy || misPriceSell;
 
     bool callCheck = includeCalls && checkCall(option.getOptionType());
@@ -53,4 +55,8 @@ bool OptionFilter::markOption(Option& option){
     bool typeCheck = callCheck || putCheck;
 
     return expCheck && typeCheck && misPriceCheck;
+}
+
+double OptionFilter::getMisprice(){
+    return mispriceThresholdPercent;
 }

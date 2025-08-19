@@ -69,7 +69,7 @@ OptionMap::OptionMap(string symbol, bool customFilter) : _symbol(symbol) {
             double gamma =          std::stod(rawOptionData[start + 15]);
             double iv =             std::stod(rawOptionData[start + 16]);
 
-            if (i){
+            if (i == 0){
                 call = Option(CALL, assetPrice, year, month, day, strikePrice, bid, ask, bidSize, askSize, volume, openInterest, rho, vega, theta, delta, gamma, iv);
             } else {
                 put = Option(PUT, assetPrice, year, month, day, strikePrice, bid, ask, bidSize, askSize, volume, openInterest, rho, vega, theta, delta, gamma, iv);

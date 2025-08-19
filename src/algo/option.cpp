@@ -145,6 +145,7 @@ Option::Option(
                         std::to_string(year);
     calculateTimeToExpiration(year, month, day);
     _fairValue = price_binomial();
+    calculateMisprice();
     
 }
 
@@ -155,7 +156,9 @@ void Option::printOption() const  {
         << ", Strike Price: " << _strikePrice 
         << ", Ask Value: " << _ask
         << ", Bid Value: " << _bid
-        << ", Fair value: " << _fairValue << '\n';
+        << ", Fair value: " << _fairValue
+        << ", Misprice Buy: " << _mispricePercentBuy
+        << ", Misprice Sell: " << _mispricePercentSell << '\n';
 }
 
 void Option::calculateMisprice() {

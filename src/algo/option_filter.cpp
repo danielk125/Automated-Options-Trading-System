@@ -1,7 +1,7 @@
 #include "../../include/option_filter.hpp"
 
 bool OptionFilter::checkTime(double timeToExpiration){
-    const double weekToYear = 7/365;
+    const double weekToYear = 7.0/365.0;
 
     double startWeek = numWeeksToExpirationStart * weekToYear;
     double endWeek = numWeeksToExpirationEnd * weekToYear;
@@ -24,7 +24,7 @@ bool OptionFilter::checkPut(OptionType ot){
 OptionFilter::OptionFilter(){
     numWeeksToExpirationStart = -1;
     numWeeksToExpirationEnd = -1;
-    mispriceThresholdPercent = -1;
+    mispriceThresholdPercent = 100;
     includeCalls = -1;
     includePuts = -1;
     includeBuys = -1;

@@ -98,9 +98,9 @@ vector<Order> Portfolio::closePositions() {
             order.secInfo = std::make_unique<OptionAbreviator>(_OMap._symbol, option.getExpDate(), option.getStrike(), option.getOptionType());
 
             if (order.ordSide == SELL) {
-                cash += option.getBid();
+                cash += option.getBid() * 100;
             } else {
-                cash -= option.getAsk();
+                cash -= option.getAsk() * 100;
             }
 
             res.push_back(std::move(order));
@@ -117,7 +117,7 @@ vector<Order> Portfolio::openPositions() {
         Option option = *contract;
 
         if (option.checkBuy()){
-            if (option.getAsk() < cash) 
+            if (option.getAsk() * 100 > cash) 
                 continue;
 
             Order order;
@@ -127,7 +127,7 @@ vector<Order> Portfolio::openPositions() {
             order.size = 1;
             order.secInfo = std::make_unique<OptionAbreviator>(_OMap._symbol, option.getExpDate(), option.getStrike(), option.getOptionType());
 
-            cash -= option.getAsk();
+            cash -= option.getAsk() * 100;
 
             res.push_back(std::move(order));
         } else {
@@ -138,7 +138,7 @@ vector<Order> Portfolio::openPositions() {
             order.size = 1;
             order.secInfo = std::make_unique<OptionAbreviator>(_OMap._symbol, option.getExpDate(), option.getStrike(), option.getOptionType());
 
-            cash += option.getBid();
+            cash += option.getBid() * 100;
 
             res.push_back(std::move(order));
         }

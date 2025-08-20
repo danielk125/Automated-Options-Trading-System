@@ -129,6 +129,8 @@ vector<Order> Portfolio::openPositions() {
 
             cash -= option.getAsk() * 100;
 
+            option.printOption();
+
             res.push_back(std::move(order));
         } else {
             Order order;

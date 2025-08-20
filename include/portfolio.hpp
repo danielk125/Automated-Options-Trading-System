@@ -23,9 +23,9 @@ struct Position {
     int size;
 
     Position() = default;
-    Position(const Position&)            = delete;    // no copying
+    Position(const Position&)            = delete;
     Position& operator=(const Position&) = delete;
-    Position(Position&&)                 = default;   // movable
+    Position(Position&&)                 = default;
     Position& operator=(Position&&)      = default;
 };
 

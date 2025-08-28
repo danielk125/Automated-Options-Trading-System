@@ -1,23 +1,36 @@
 #include<iostream>
-#include "../include/portfolio.hpp"
+#include "../include/backtester.hpp"
 #include <chrono>
 #include <print>
 
+/*
+TODO
+
+- make all file paths relative to a project root (cmakelists.txt stuff)
+
+*/
+
 int main(int argc, char* argv[]){
-    if(argc != 2)
+    if(argc != 3) {
         return 1;
+    }
+
     string symbol = argv[1];
+    string liveOrBacktest = argv[2];
 
-    auto start = std::chrono::high_resolution_clock::now();
-    OptionMap o(symbol, false);
-    auto end = std::chrono::high_resolution_clock::now();
+    if (liveOrBacktest == "live"){
+        OptionMap o(symbol, false);
+        Portfolio p(o);
+        p.loadPortfolio();
+        p.executeOrders();
+    } else if (liveOrBacktest == "backtest"){
+        Backtester B(symbol, false);
 
-    std::chrono::duration<double> duration = end - start;
-    std::cout << symbol << " option chain construction took " << duration.count() << " seconds\n";
+        auto start = std::chrono::high_resolution_clock::now();
+        B.run();
+        auto end = std::chrono::high_resolution_clock::now();
 
-    Portfolio p(o);
-    p.loadPortfolio();
-    p.executeOrders();
-
-    return 0;
+        std::chrono::duration<double> duration = end - start;
+        std::cout << "backtest took " << duration.count() << " seconds\n";
+    }
 }

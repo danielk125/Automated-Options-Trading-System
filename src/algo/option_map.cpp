@@ -27,9 +27,11 @@ void OptionMap::loadFilter(string filter_filename){
     _filter = OptionFilter(numWeeksToExpirationStart, numWeeksToExpirationEnd, mispriceThresholdPercent, includeCalls, includePuts, includeBuys, includeSells);
 }
 
-OptionMap::OptionMap(string symbol, bool customFilter) : _symbol(symbol) {
-    loadFilter(customFilter ? symbol : "filter");
+void OptionMap::setMapField(string date, double k, OptionPair op){
+    _map[date][k] = op;
+}
 
+void OptionMap::load_from_Etrade(string symbol){
     string filename = "live_CSV/" + symbol + "_option_chain.csv";
 
     std::ifstream file(filename);
@@ -57,7 +59,7 @@ OptionMap::OptionMap(string symbol, bool customFilter) : _symbol(symbol) {
 
             double strikePrice =    std::stod(rawOptionData[start + 4]);
             double bid =            std::stod(rawOptionData[start + 5]);
-            double ask =            std::stof(rawOptionData[start + 6]);
+            double ask =            std::stod(rawOptionData[start + 6]);
             int bidSize =           std::stoi(rawOptionData[start + 7]);
             int askSize =           std::stoi(rawOptionData[start + 8]);
             int volume =            std::stoi(rawOptionData[start + 9]);
@@ -86,9 +88,98 @@ OptionMap::OptionMap(string symbol, bool customFilter) : _symbol(symbol) {
         string dateID = call.getExpDate();
         double k = call.getStrike();
 
-        auto& chain = _map[dateID];
-        chain.insert_or_assign(k, OptionPair(call, put));
+        setMapField(dateID, k, OptionPair(call, put));
     }
+}
+
+void OptionMap::load_for_backtest(string symbol, string date, double assetPrice){
+    // date : yyyy-mm-dd
+    string filename = "backtest_CSV/" + symbol + "/" + date + "_backtest.csv";
+    std::ifstream file(filename);
+    std::optional<Option> call;
+
+    int i = 0;
+    bool firstline = true;
+    string rawLine;
+    while(std::getline(file, rawLine)){
+        if (firstline){
+            firstline = false;
+            continue;
+        }
+        vector<string> rawOptionData;
+        std::stringstream line(rawLine);
+        string field;
+
+        while(std::getline(line, field, ','))
+            rawOptionData.push_back(field);
+
+        string ed = rawOptionData[2];
+        string s_year = ed.substr(0, 4);
+        string s_month = ed.substr(5, 2);
+        string s_day = ed.substr(8, 2);
+
+        double ap =             assetPrice;
+        int year =              std::stoi(s_year);
+        int month =             std::stoi(s_month);
+        int day =               std::stoi(s_day);
+
+        Option option;
+
+        double strikePrice =    std::stod(rawOptionData[3]);
+        double bid =            std::stod(rawOptionData[7]);
+        double ask =            std::stod(rawOptionData[9]);
+        int bidSize =           std::stoi(rawOptionData[8]);
+        int askSize =           std::stoi(rawOptionData[10]);
+        int volume =            std::stoi(rawOptionData[11]);
+        int openInterest =      std::stoi(rawOptionData[12]);
+        double rho =            std::stod(rawOptionData[19]);
+        double vega =           std::stod(rawOptionData[18]);
+        double theta =          std::stod(rawOptionData[17]);
+        double delta =          std::stod(rawOptionData[15]);
+        double gamma =          std::stod(rawOptionData[16]);
+        double iv =             std::stod(rawOptionData[14]);
+
+        string cur_date = rawOptionData[13];
+        string cur_year = cur_date.substr(0, 4);
+        string cur_month = cur_date.substr(5, 2);
+        string cur_day = cur_date.substr(8, 2);
+
+        string date = cur_month + "_" + cur_day + "_" + cur_year;
+
+        if (i == 0){
+            option = Option(CALL, ap, year, month, day, strikePrice, bid, ask, bidSize, askSize, volume, openInterest, rho, vega, theta, delta, gamma, iv, date);
+        } else {
+            option = Option(PUT, ap, year, month, day, strikePrice, bid, ask, bidSize, askSize, volume, openInterest, rho, vega, theta, delta, gamma, iv, date);
+        }
+
+        bool validOption = _filter.markOption(option);
+        if (validOption)
+            _filtered.push(option);
+        
+        string dateID = option.getExpDate();
+        double k = option.getStrike();
+
+        if (i == 0){
+            call = option;
+        } else {
+            if (call.has_value()) {
+                setMapField(dateID, k, OptionPair(*call, option));
+            }
+            call.reset();
+        }
+
+        i ^= 1;
+    }
+}
+
+OptionMap::OptionMap(string symbol, bool customFilter) : _symbol(symbol) {
+    loadFilter(customFilter ? symbol : "filter");
+    load_from_Etrade(symbol);
+}
+
+OptionMap::OptionMap(string symbol, bool customFilter, string date, double assetPrice) : _symbol(symbol) {
+    loadFilter(customFilter ? symbol : "filter");
+    load_for_backtest(symbol, date, assetPrice);
 }
 
 const OptionChain OptionMap::operator[](std::string_view dateID){

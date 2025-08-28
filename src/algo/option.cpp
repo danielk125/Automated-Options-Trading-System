@@ -2,13 +2,30 @@
 
 using std::cout;
 
-void Option::calculateTimeToExpiration(int e_year, int e_month, int e_day){
-    time_t now = time(NULL);
+void Option::calculateTimeToExpiration(string startDate){
+    time_t now; 
+
+    if (startDate == "") now = time(NULL);
+    else {
+        int sMonth = std::stoi(startDate.substr(0,2));
+        int sDay = std::stoi(startDate.substr(3,2));
+        int sYear = std::stoi(startDate.substr(6,4));
+        struct tm startTime {0};
+        startTime.tm_year = sYear - 1900;
+        startTime.tm_mon = sMonth - 1;
+        startTime.tm_mday = sDay;
+        startTime.tm_hour = 16;
+        startTime.tm_min = 30;
+        startTime.tm_sec = 0;
+        startTime.tm_isdst = -1;
+
+        now = mktime(&startTime);
+    }
 
     struct tm expTime {0};
-    expTime.tm_year = e_year - 1900;
-    expTime.tm_mon = e_month - 1;
-    expTime.tm_mday = e_day;
+    expTime.tm_year = _year - 1900;
+    expTime.tm_mon = _month - 1;
+    expTime.tm_mday = _day;
     expTime.tm_hour = 16;
     expTime.tm_min = 30;
     expTime.tm_sec = 0;
@@ -122,7 +139,8 @@ Option::Option(
     double theta, 
     double delta, 
     double gamma, 
-    double iv
+    double iv,
+    string startDate
     ) : 
     _optionType(optionType),
     _assetPrice(assetPrice),
@@ -138,12 +156,15 @@ Option::Option(
     _gamma(gamma),
     _theta(theta),
     _rho(rho),
-    _vega(vega)
+    _vega(vega),
+    _day(day),
+    _month(month),
+    _year(year)
 {
     _expirationDate =   std::to_string(month) + "_" +
                         std::to_string(day)  + "_" +
                         std::to_string(year);
-    calculateTimeToExpiration(year, month, day);
+    calculateTimeToExpiration(startDate);
     _fairValue = price_binomial();
     calculateMisprice();
     

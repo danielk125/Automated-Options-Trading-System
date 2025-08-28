@@ -11,6 +11,7 @@
 #include "json.hpp"
 #include "util.hpp"
 #include "option_map.hpp"
+#include "closing_filter.hpp"
 
 using json = nlohmann::json;
 
@@ -46,25 +47,29 @@ struct Order {
 class Portfolio {
 public:
     Portfolio(OptionMap& omap);
-    // parse current positions and apply closing logic
-    vector<Order> closePositions();
-
-    // parse relevent contracts and enter new orders
-    vector<Order> openPositions();
-
-    // send positions to execution handler
+    void loadPortfolio();
     void executeOrders();
 
-    // for backtesting
-    void loadPortfolio();
+    void loadPortfolioBacktest();
+    void savePortfolioBacktest();
+
+    double calculateCurrentValue() const;
 
 private:
     OptionMap& _OMap;
-
     vector<Position> _currentPositions;
-
+    ClosingFilter _filter;
     double cash;
     double value;
     double unrealizedGain;
     double realizedGain;
+
+    vector<Order> closePositions();
+    vector<Order> openPositions();
+
+    void loadClosingFilter();
+    double closePositionsBacktest(double& gain);
+    void updatePositionsBacktest();
+    double openPositionsBacktest();
+    double calculateUnrealizedGain();
 };

@@ -29,7 +29,13 @@ class OptionMap {
 public:
     string _symbol;
 
+    void load_from_Etrade(string symbol);
+
+    void load_for_backtest(string symbol, string date, double assetPrice);
+
     OptionMap(string symbol, bool customFilter);
+
+    OptionMap(string symbol, bool customFilter, string date, double assetPrice);
 
     //OptionMap(string option_filename, double assetPrice, string symbol);
     // constructor overload for parsing backtest data
@@ -46,6 +52,8 @@ public:
     double accessMispriceThreshold();
 
 private:
+    void setMapField(string date, double k, OptionPair op);
+
     unordered_map<string, unordered_map<double, OptionPair>> _map;
 
     struct cmp {

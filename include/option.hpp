@@ -32,8 +32,11 @@ public:
         double theta, 
         double delta, 
         double gamma, 
-        double iv
+        double iv,
+        string startDate = ""
     );
+
+    //write overload for backtesting
 
     string getExpDate() const;
     double getStrike() const;
@@ -85,10 +88,14 @@ private:
     double _rho;
     double _vega;
 
+    int _day;
+    int _month;
+    int _year;
+
     bool _buy;
     bool _sell;
 
-    void calculateTimeToExpiration(int e_year, int e_month, int e_day);
+    void calculateTimeToExpiration(string startDate = "");
 
     void calculate_binomial_params(
         int& N,
@@ -114,6 +121,11 @@ class OptionPair {
     Option _putOption;
 
 public:
+    OptionPair(){
+        _callOption = Option();
+        _putOption = Option();
+    }
+
     OptionPair(Option call, Option put) : _callOption(call), _putOption(put) {
         if (call.getOptionType() != CALL || put.getOptionType() != PUT){
             throw std::invalid_argument("OptionPair must be (CALL, PUT)");
@@ -126,5 +138,13 @@ public:
 
     const Option& getPut() const {
         return _putOption;
+    }
+
+    void setCall(Option o) {
+        _callOption = o;
+    }
+
+    void setPut(Option o) {
+        _putOption = o;
     }
 };

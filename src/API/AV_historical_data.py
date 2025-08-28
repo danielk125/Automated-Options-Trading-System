@@ -58,7 +58,7 @@ with open(asset_file, "r") as f:
         print("Date not found.")
         exit(1)
 
-    stop = max(index - 20, -1)
+    stop = max(index - 25, -1)
     
     for l in range(index, stop, -1):
         fields = lines[l].split(",")

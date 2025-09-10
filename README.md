@@ -48,3 +48,8 @@ Filters are storing in the ./filter directory as csv files. Here is the break do
 
 ## Next Steps
 This is only the first verson of the automated options trading system. I plan to update it rather regularly as I continue to learn more about c++ and options. the first area for improvement would be performance. The code is hardly optimized and does likely a lot of unecessay copying of complex objects. I plan to go through the code thouroughly and update with performance in mind. I would also like to add more fields and granularity to the filters to allow for more custom strategies. Additionally, I would like to build support for dynamic hedging strategies involving opening opposite positions in the underlying contract.
+
+# V1.1
+- Bug fixed related to gain calculation
+- Added take profit closing filter
+- Added opening filter for "in the money" or "out of the money" contracts

@@ -21,6 +21,14 @@ bool OptionFilter::checkPut(OptionType ot){
     return ot == PUT;
 }
 
+bool OptionFilter::checkOOM(double strikePrice, double assetPrice){
+    return strikePrice > assetPrice;
+}
+
+bool OptionFilter::checkITM(double strikePrice, double assetPrice){
+    return strikePrice < assetPrice;
+}
+
 OptionFilter::OptionFilter(){
     numWeeksToExpirationStart = -1;
     numWeeksToExpirationEnd = -1;
@@ -29,16 +37,20 @@ OptionFilter::OptionFilter(){
     includePuts = -1;
     includeBuys = -1;
     includeSells = -1;
+    includeInTheMoney = -1;
+    includeOutOfMoney = -1;
 }
 
-OptionFilter::OptionFilter(int nws, int nwe, double mpth, bool ic, bool ip, bool ib, bool is) : 
+OptionFilter::OptionFilter(int nws, int nwe, double mpth, bool ic, bool ip, bool ib, bool is, bool ioom, bool iitm) : 
     numWeeksToExpirationStart(nws),
     numWeeksToExpirationEnd(nwe),
     mispriceThresholdPercent(mpth),
     includeCalls(ic),
     includePuts(ip),
     includeBuys(ib),
-    includeSells(is)
+    includeSells(is),
+    includeOutOfMoney(ioom),
+    includeInTheMoney(iitm)
 {};
 
 bool OptionFilter::markOption(Option& option){
@@ -50,11 +62,13 @@ bool OptionFilter::markOption(Option& option){
     option.markSell(misPriceSell);
     bool misPriceCheck = misPriceBuy || misPriceSell;
 
+    bool OOMCheck = includeOutOfMoney && checkOOM(option.getStrike(), option.getAssetPrice());
+    bool ITMCheck = includeInTheMoney && checkITM(option.getStrike(), option.getAssetPrice());
     bool callCheck = includeCalls && checkCall(option.getOptionType());
     bool putCheck = includePuts && checkPut(option.getOptionType());
     bool typeCheck = callCheck || putCheck;
 
-    return expCheck && typeCheck && misPriceCheck;
+    return expCheck && typeCheck && (OOMCheck || ITMCheck) && misPriceCheck;
 }
 
 double OptionFilter::getMisprice(){

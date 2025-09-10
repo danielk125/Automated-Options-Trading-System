@@ -9,9 +9,19 @@ ClosingFilter::ClosingFilter() {
     stopLossPercent = 0;
     includeStopLossAmount = 0;
     stopLossAmount = 0;
+    includeTakeProfitPercent = 0;
+    takeProfitPercent = 0;
+    includeTakeProfitAmount = 0;
+    takeProfitAmount = 0;
 }
 
-ClosingFilter::ClosingFilter(bool ias, int nwe, bool ict, double mpct, bool islp, double slp, bool isla, double sla) {
+ClosingFilter::ClosingFilter(
+    bool ias, int nwe, 
+    bool ict, double mpct, 
+    bool islp, double slp, 
+    bool isla, double sla,
+    bool itpp, double tpp,
+    bool itpa, double tpa ) {
     includeAutoSell = ias;
     numWeeksFromExpiration = nwe;
     includeClosingThreshold = ict;
@@ -20,6 +30,10 @@ ClosingFilter::ClosingFilter(bool ias, int nwe, bool ict, double mpct, bool islp
     stopLossPercent = slp;
     includeStopLossAmount = isla;
     stopLossAmount = sla;
+    includeTakeProfitPercent = itpp;
+    takeProfitPercent = tpp;
+    includeTakeProfitAmount = itpa;
+    takeProfitAmount = tpa;
 }
 
 bool ClosingFilter::checkTime(double timeToExpiration){
@@ -48,6 +62,20 @@ bool ClosingFilter::checkStopLossAmount(double initialCost, double currentvalue)
     return loss >= stopLossAmount;
 }
 
+bool ClosingFilter::checkTakeProfitPercent(double initialCost, double currentvalue){
+    if (currentvalue < initialCost) return false;
+    
+    double gainPercent = (currentvalue - initialCost) / initialCost;
+    return gainPercent >= takeProfitPercent;
+}
+
+bool ClosingFilter::checkTakeProfitAmount(double initialCost, double currentvalue){
+    if (currentvalue < initialCost) return false;
+
+    double gainAmount = currentvalue - initialCost;
+    return gainAmount >= takeProfitAmount;
+}
+
 bool ClosingFilter::markPosition(PositionSide pside, double entryPrice, Option& option){
     bool shouldClose = false;
 
@@ -57,8 +85,10 @@ bool ClosingFilter::markPosition(PositionSide pside, double entryPrice, Option& 
     bool mispriceCheck = includeClosingThreshold && (mispriceCheckBuy || mispriceCheckSell);
     bool SLPCheck = includeStopLossPercent && checkStopLossPercent(entryPrice, option.getAsk());
     bool SLACheck = includeStopLossAmount && checkStopLossAmount(entryPrice, option.getAsk());
+    bool TPPCheck = includeTakeProfitPercent && checkTakeProfitPercent(entryPrice, option.getAsk());
+    bool TPACheck = includeTakeProfitAmount && checkTakeProfitAmount(entryPrice, option.getAsk());
 
-    shouldClose = timeCheck || mispriceCheck || SLACheck || SLPCheck;
+    shouldClose = timeCheck || mispriceCheck || SLACheck || SLPCheck || TPACheck;
 
     return shouldClose;
 }

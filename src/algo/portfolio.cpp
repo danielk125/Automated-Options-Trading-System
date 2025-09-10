@@ -63,6 +63,10 @@ void Portfolio::loadClosingFilter(){
     double stopLossPercent              = std::stod(fields[5]);
     bool includeStopLossAmount          = std::stoi(fields[6]);
     double stopLossAmount               = std::stod(fields[7]);
+    bool includeTakeProfitPercent       = std::stoi(fields[8]);
+    double takeProfitPercent            = std::stod(fields[9]);
+    bool includeTakeProfitAmount        = std::stoi(fields[10]);
+    double takeProfitAmount             = std::stod(fields[11]);
 
     _filter = ClosingFilter(includeAutoSell, 
                             numWeeksFromExpiration, 
@@ -71,7 +75,12 @@ void Portfolio::loadClosingFilter(){
                             includeStopLossPercent, 
                             stopLossPercent, 
                             includeStopLossAmount,
-                            stopLossAmount);
+                            stopLossAmount,
+                            includeTakeProfitPercent,
+                            takeProfitPercent,
+                            includeTakeProfitAmount,
+                            takeProfitAmount
+                        );
 }
 
 vector<Order> Portfolio::closePositions() {
@@ -218,10 +227,10 @@ double Portfolio::closePositionsBacktest(double& gain){
 
             if (close) {
                 if (pos.posSide == LONG) {
-                    cash_change += (100 * pos.curValue);
-                    gain_temp += 100 * (pos.curValue - pos.entryPrice);
+                    cash_change += (100 * pos.curValue * pos.size);
+                    gain_temp += 100 * (pos.curValue - pos.entryPrice) * pos.size;
                 } 
-                else                        cash_change -= (100 * pos.curValue);
+                else                        cash_change -= (100 * pos.curValue) * pos.size;
             }
 
             return close;
@@ -242,20 +251,21 @@ void Portfolio::updatePositionsBacktest(){
 }
 
 double Portfolio::openPositionsBacktest(){
-    double cur_cash {cash};
+    double cur_cash = cash;
     while (auto contract = _OMap.getFilteredContract()){
         Option option = *contract;
         Position pos;
+        int size = 1;
 
         if (option.checkBuy()){
-            if (option.getAsk() * 100 > cur_cash) 
+            if (option.getAsk() < 0.2 || option.getAsk() * 100 * size > (cur_cash)) 
                 continue;
 
             pos.posSide = LONG;
             pos.secType = OPTN;
             pos.entryPrice = option.getAsk();
             pos.curValue = option.getBid();
-            pos.size = 1;
+            pos.size = size;
             pos.secInfo = std::make_unique<OptionAbreviator>(_OMap._symbol, option.getExpDate(), option.getStrike(), option.getOptionType());
 
             cur_cash -= option.getAsk() * 100 * pos.size;
@@ -266,7 +276,7 @@ double Portfolio::openPositionsBacktest(){
             pos.secType = OPTN;
             pos.entryPrice = option.getBid();
             pos.curValue = option.getAsk();
-            pos.size = 1;
+            pos.size = size;
             pos.secInfo = std::make_unique<OptionAbreviator>(_OMap._symbol, option.getExpDate(), option.getStrike(), option.getOptionType());
 
             cur_cash += option.getBid() * 100 * pos.size;
@@ -331,8 +341,9 @@ void Portfolio::loadPortfolioBacktest(){
 }
 
 void Portfolio::savePortfolioBacktest(){
-    double newRealizedGain {realizedGain};
+    double newRealizedGain {0};
     double cash_change_closing = closePositionsBacktest(newRealizedGain);
+    newRealizedGain += realizedGain;
     cash += cash_change_closing;
     updatePositionsBacktest();
     double cash_change_opening = openPositionsBacktest();

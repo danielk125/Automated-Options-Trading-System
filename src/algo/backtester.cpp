@@ -39,11 +39,11 @@ void Backtester::retrieveDatesAndPrices(string startDate){
         double assetPrice {0.0};
         std::stringstream line(rawLine);
         string temp;
-        for (int i = 0; i < 6 ; ++i){
+        for (int i = 0; i < 5; ++i){
             std::getline(line, temp, ',');
             if (i == 0){
                 date = temp;
-            } else if (i == 5) {
+            } else if (i == 4) {
                 assetPrice = std::stod(temp);
             } 
         }

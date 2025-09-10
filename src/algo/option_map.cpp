@@ -23,8 +23,20 @@ void OptionMap::loadFilter(string filter_filename){
     bool includePuts                    = std::stoi(fields[4]);
     bool includeBuys                    = std::stoi(fields[5]);
     bool includeSells                   = std::stoi(fields[6]);
+    bool includeOutOfMoney              = std::stoi(fields[7]);
+    bool includeInTheMoney              = std::stoi(fields[8]);
 
-    _filter = OptionFilter(numWeeksToExpirationStart, numWeeksToExpirationEnd, mispriceThresholdPercent, includeCalls, includePuts, includeBuys, includeSells);
+    _filter = OptionFilter(
+        numWeeksToExpirationStart, 
+        numWeeksToExpirationEnd, 
+        mispriceThresholdPercent, 
+        includeCalls, 
+        includePuts, 
+        includeBuys, 
+        includeSells,
+        includeOutOfMoney,
+        includeInTheMoney
+    );
 }
 
 void OptionMap::setMapField(string date, double k, OptionPair op){

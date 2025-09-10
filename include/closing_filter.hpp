@@ -12,6 +12,10 @@ class ClosingFilter {
     double stopLossPercent;
     bool includeStopLossAmount;
     double stopLossAmount;
+    bool includeTakeProfitPercent;
+    double takeProfitPercent;
+    bool includeTakeProfitAmount;
+    double takeProfitAmount;
 
     bool checkTime(double timeToExpiration);
 
@@ -21,10 +25,20 @@ class ClosingFilter {
 
     bool checkStopLossAmount(double initialCost, double currentvalue);
 
+    bool checkTakeProfitPercent(double initialCost, double currentvalue);
+
+    bool checkTakeProfitAmount(double initialCost, double currentvalue);
+
 public:
     ClosingFilter();
 
-    ClosingFilter(bool ias, int nwe, bool ict, double mpct, bool islp, double slp, bool isla, double sla);
+    ClosingFilter( 
+    bool ias, int nwe, 
+    bool ict, double mpct, 
+    bool islp, double slp, 
+    bool isla, double sla,
+    bool itpp, double tpp,
+    bool itpa, double tpa);
 
     bool markPosition(PositionSide pside, double entryPrice, Option& option);
 };
